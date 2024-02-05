@@ -15,7 +15,7 @@ import { MetaFunction, LinksFunction, LoaderFunction } from "@remix-run/node"; /
 
 import { ServerStyleContext, ClientStyleContext } from "./context";
 import theme from "./theme/theme";
-import MainLayout from "./components/main-layout/main-layout";
+import MainLayout from "./layout/main-layout/main-layout";
 
 export const meta: MetaFunction = () => [
   {
