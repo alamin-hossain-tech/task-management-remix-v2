@@ -22,7 +22,6 @@ const MainLayout = () => {
       <Flex gap={0} position={"relative"}>
         <Box
           w={"250px"}
-          h={"100dvh"}
           position={"sticky"}
           left={0}
           top={0}
@@ -87,7 +86,9 @@ const MainLayout = () => {
               </HStack>
             </HStack>
           </HStack>
-          <Outlet />
+          <Box h={"calc(100vh - 70px)"} p={"16px"}>
+            <Outlet />
+          </Box>
         </Box>
       </Flex>
     </>

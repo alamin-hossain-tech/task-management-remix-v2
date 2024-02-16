@@ -9,5 +9,5 @@ export const meta: MetaFunction = () => {
 };
 
 export default function Index() {
-  return <Box h={"200vh"}> hello world</Box>;
+  return <Box> hello world</Box>;
 }
