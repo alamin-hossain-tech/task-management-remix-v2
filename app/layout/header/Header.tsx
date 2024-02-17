@@ -25,7 +25,8 @@ const Header = () => {
       top={0}
       zIndex={99}
       bgColor={"white"}
-      px={"48px"}
+      pr={"32px"}
+      pl={"16px"}
       justifyContent={"space-between"}
     >
       <InputGroup w={"250px"} bgColor={"#f5f5f5"}>

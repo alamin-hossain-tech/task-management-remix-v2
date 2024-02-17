@@ -8,12 +8,21 @@ const config: ThemeConfig = {
   initialColorMode: "light",
   useSystemColorMode: true,
 };
+const colors = {
+  brand: { 100: "#000", 200: "#f2f2f2" },
+  border: "#DBDBDB",
+};
 
-// 3. extend the theme
 const theme = extendTheme({
   config,
-  colors: {
-    border: "#DBDBDB",
+  colors,
+  components: {
+    Button: {
+      // 1. We can update the base styles
+      baseStyle: {
+        fontWeight: "bold", // Normally, it is "semibold"
+      },
+    },
   },
 });
 

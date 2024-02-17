@@ -1,21 +1,22 @@
 // root.tsx
-import React, { useContext, useEffect, useMemo } from "react";
-import { withEmotionCache } from "@emotion/react";
 import { ChakraProvider, cookieStorageManagerSSR } from "@chakra-ui/react";
+import { withEmotionCache } from "@emotion/react";
+import { LinksFunction, LoaderFunction, MetaFunction } from "@remix-run/node"; // Depends on the runtime you choose
 import {
   Links,
   LiveReload,
   Meta,
-  Outlet,
   Scripts,
   ScrollRestoration,
   useLoaderData,
 } from "@remix-run/react";
-import { MetaFunction, LinksFunction, LoaderFunction } from "@remix-run/node"; // Depends on the runtime you choose
+import React, { useContext, useEffect, useMemo } from "react";
 
-import { ServerStyleContext, ClientStyleContext } from "./context";
-import theme from "./theme/theme";
+import { ClientStyleContext, ServerStyleContext } from "./context";
 import MainLayout from "./layout/main-layout/main-layout";
+import theme from "./theme/theme";
+import { Provider } from "react-redux";
+import store from "./redux/store";
 
 export const meta: MetaFunction = () => [
   {
@@ -73,7 +74,7 @@ const Document = withEmotionCache(
 
     const CHAKRA_COOKIE_COLOR_KEY = "chakra-ui-color-mode";
 
-    let cookies = useLoaderData();
+    let cookies: string = useLoaderData();
 
     // the client get the cookies from the document
     // because when we do a client routing, the loader can have stored an outdated value
@@ -122,12 +123,15 @@ const Document = withEmotionCache(
             className: `chakra-ui-${colorMode}`,
           })}
         >
-          <ChakraProvider
-            colorModeManager={cookieStorageManagerSSR(cookies)}
-            theme={theme}
-          >
-            {children}
-          </ChakraProvider>
+          <Provider store={store}>
+            <ChakraProvider
+              colorModeManager={cookieStorageManagerSSR(cookies)}
+              theme={theme}
+            >
+              {children}
+            </ChakraProvider>
+          </Provider>
+
           <ScrollRestoration />
           <Scripts />
           <LiveReload />
