@@ -5,8 +5,28 @@ import LeftSidebar from "../left-sidebar/LeftSidebar";
 
 const MainLayout = () => {
   return (
-    <>
-      <Flex gap={0} position={"relative"}>
+    <Box position={"relative"}>
+      {/* logo box  */}
+      <HStack w={"full"} position={"sticky"} top={0} left={0}>
+        <HStack
+          w={"250px"}
+          h={"70px"}
+          borderBottom={"1px"}
+          borderRight={"1px"}
+          borderColor={"border"}
+          _dark={{ borderColor: "gray.700" }}
+          align={"center"}
+          justify={"center"}
+          flexShrink={0}
+        >
+          <Heading>Logo</Heading>
+        </HStack>
+        <Header />
+      </HStack>
+
+      {/* logo box end  */}
+
+      <Flex gap={0}>
         <Box
           w={"250px"}
           position={"sticky"}
@@ -14,35 +34,19 @@ const MainLayout = () => {
           top={0}
           borderRight={"1px"}
           borderColor={"border"}
+          _dark={{ borderColor: "gray.700" }}
           zIndex={99}
+          flexShrink={0}
         >
-          {/* logo box  */}
-          <HStack
-            w={"full"}
-            h={"70px"}
-            borderBottom={"1px"}
-            borderColor={"border"}
-            align={"center"}
-            justify={"center"}
-          >
-            <Heading>Logo</Heading>
-          </HStack>
-          {/* logo box end  */}
-
           {/* Left Side Bar  */}
           <LeftSidebar />
           {/* left side bart end  */}
         </Box>
-        <Box w={"full"}>
-          {/* header start  */}
-          <Header />
-          {/* header end  */}
-          <Box h={"calc(100vh - 70px)"} p={"16px"}>
-            <Outlet />
-          </Box>
+        <Box p={"16px"} overflowX={"auto"}>
+          <Outlet />
         </Box>
       </Flex>
-    </>
+    </Box>
   );
 };
 

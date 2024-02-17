@@ -1,8 +1,17 @@
-import { Box } from "@chakra-ui/react";
+import { Box, Button, useColorMode } from "@chakra-ui/react";
 import React from "react";
 
 const About = () => {
-  return <Box color={"brand.100"}> this is about page</Box>;
+  const { colorMode, toggleColorMode } = useColorMode();
+
+  console.log(colorMode);
+  return (
+    <Box color={"brand.100"}>
+      {" "}
+      this is about page
+      <Button onClick={toggleColorMode}>Toggle</Button>
+    </Box>
+  );
 };
 
 export default About;

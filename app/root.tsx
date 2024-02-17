@@ -70,7 +70,7 @@ const Document = withEmotionCache(
     // here we can set the default color mode. If we set it to null,
     // there's no way for us to know what is the the user's preferred theme
     // so the cient will have to figure out and maybe there'll be a flash the first time the user visits us.
-    const DEFAULT_COLOR_MODE: "light" | "dark" | null = "light";
+    const DEFAULT_COLOR_MODE: "light" | "dark" | null | "system" = "system";
 
     const CHAKRA_COOKIE_COLOR_KEY = "chakra-ui-color-mode";
 

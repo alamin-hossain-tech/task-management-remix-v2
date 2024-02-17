@@ -9,7 +9,7 @@ const CalendarIcon = (props) => (
     {...props}
   >
     <path
-      stroke="#000"
+      stroke="currentcolor"
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}

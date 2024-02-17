@@ -5,14 +5,19 @@ import {
   Input,
   InputGroup,
   InputLeftAddon,
+  InputLeftElement,
   Text,
+  useColorMode,
 } from "@chakra-ui/react";
 import CalendarIcon from "~/components/icons/calendar-icon";
+import DarkIcon from "~/components/icons/dark-icon";
+import LightIcon from "~/components/icons/light-icon";
 import MessageQuestion from "~/components/icons/message-question";
 import NotificationIcon from "~/components/icons/notification-icon";
 import SearchIcon from "~/components/icons/search-icon";
 
 const Header = () => {
+  const { colorMode, toggleColorMode } = useColorMode();
   return (
     <HStack
       alignItems={"center"}
@@ -20,23 +25,22 @@ const Header = () => {
       h={"70px"}
       borderBottom={"1px"}
       borderColor={"border"}
+      _dark={{ borderColor: "gray.700" }}
       position={"sticky"}
-      left={0}
+      right={0}
       top={0}
       zIndex={99}
-      bgColor={"white"}
       pr={"32px"}
       pl={"16px"}
       justifyContent={"space-between"}
+      w={"full"}
     >
-      <InputGroup w={"250px"} bgColor={"#f5f5f5"}>
-        <InputLeftAddon px={"8px"} bgColor={"transparent"}>
+      <InputGroup w={"250px"}>
+        <InputLeftElement pointerEvents={"none"}>
           <SearchIcon />
-        </InputLeftAddon>
+        </InputLeftElement>
         <Input
           placeholder="Search for anything..."
-          borderLeft={"none"}
-          pl={0}
           _focus={{
             boxShadow: "none",
             outline: "none",
@@ -44,12 +48,22 @@ const Header = () => {
           }}
         />
       </InputGroup>
+
       <HStack gap={"50px"}>
         {/* icons  */}
         <HStack gap={"24px"}>
           <CalendarIcon />
           <MessageQuestion />
           <NotificationIcon />
+          {colorMode === "light" ? (
+            <Box cursor={"pointer"} onClick={toggleColorMode}>
+              <DarkIcon />
+            </Box>
+          ) : (
+            <Box onClick={toggleColorMode} cursor={"pointer"}>
+              <LightIcon />
+            </Box>
+          )}
         </HStack>
         <HStack gap={"24px"}>
           <Box textAlign={"right"}>

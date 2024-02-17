@@ -8,14 +8,14 @@ const SearchIcon = (props: any) => (
     {...props}
   >
     <path
-      stroke="#000"
+      stroke="currentcolor"
       strokeLinecap="round"
       strokeLinejoin="round"
       strokeWidth={1.5}
       d="M17.5 17.5 22 22"
     />
     <path
-      stroke="#000"
+      stroke="currentcolor"
       strokeLinejoin="round"
       strokeWidth={1.5}
       d="M20 11a9 9 0 1 0-18 0 9 9 0 0 0 18 0Z"
