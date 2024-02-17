@@ -9,14 +9,6 @@ const config: ThemeConfig = {
   useSystemColorMode: true,
 };
 
-const styles = {
-  global: {
-    body: {
-      borderColor: "red",
-    },
-  },
-};
-
 // 3. extend the theme
 const theme = extendTheme({
   config,
