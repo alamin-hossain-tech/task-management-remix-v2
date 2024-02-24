@@ -9,11 +9,12 @@ import {
 } from "@chakra-ui/react";
 import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
 import { json, useLoaderData, useSubmit } from "@remix-run/react";
+import mongoose from "mongoose";
 import { FormEvent, useEffect, useRef, useState } from "react";
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
 import { useDispatch, useSelector } from "react-redux";
 import DraggableColumn from "~/components/DraggableColumn/DraggableColumn";
-import DB from "~/db/db.server";
+import { prisma } from "~/db.server";
 
 import TaskModel from "~/db/model/task.model";
 
@@ -123,16 +124,6 @@ export default function Index() {
 
   const data = useLoaderData();
 
-  useEffect(() => {
-    if (data && data?.collections) {
-      dispatch(
-        addState({
-          value: data.collections,
-        })
-      );
-    }
-  }, [data]);
-  console.log(dragItems);
   return (
     <>
       <Flex
@@ -238,16 +229,21 @@ export default function Index() {
   );
 }
 
-export const action = async ({ request }: ActionFunctionArgs) => {
-  const body = await request.formData();
-
-  const data = body.get("data");
-
-  return null;
+export const loader = async () => {
+  const data = await prisma.tasks.findMany();
+  return data;
 };
 
-export const loader = async () => {
-  await DB;
-  const data = await TaskModel.findOne({ userId: "12345" });
-  return json(data);
+export const action = async () => {
+  try {
+    const response = await prisma.tasks.create({
+      data: { userId: "12345", tasks: "hello" },
+    });
+
+    console.log({ response });
+    return null;
+  } catch (error) {
+    console.log({ error });
+    return error;
+  }
 };
