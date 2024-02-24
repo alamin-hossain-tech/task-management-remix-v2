@@ -142,7 +142,9 @@ const DraggableColumn = forwardRef((props, ref) => {
     <Draggable key={item.id} draggableId={item.id} index={index}>
       {(provided, snap) => (
         <Box
-          p={"12px"}
+          pl={"16px"}
+          pr={"4px"}
+          py={"12px"}
           rounded={"8px"}
           key={item}
           bgColor={"blackAlpha.100"}
@@ -168,8 +170,9 @@ const DraggableColumn = forwardRef((props, ref) => {
                 rounded={"8px"}
                 maxH={"calc(100vh - 280px)"}
                 overflowY={snap.isUsingPlaceholder ? "scroll" : "auto"}
+                style={{ scrollbarGutter: "stable", scrollbarWidth: "thin" }}
               >
-                <VStack ref={provided.innerRef} rounded={"8px"} p={1} gap={0}>
+                <VStack ref={provided.innerRef} rounded={"8px"} gap={0}>
                   {item?.items?.map((task, itemIndex) => (
                     <DraggableItem
                       task={task}
@@ -213,9 +216,9 @@ const DraggableColumn = forwardRef((props, ref) => {
                         >
                           <path
                             fill="currentColor"
-                            fill-rule="evenodd"
+                            fillRule="evenodd"
                             d="M4.28 3.22a.75.75 0 0 0-1.06 1.06L6.94 8l-3.72 3.72a.75.75 0 1 0 1.06 1.06L8 9.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L9.06 8l3.72-3.72a.75.75 0 0 0-1.06-1.06L8 6.94z"
-                            clip-rule="evenodd"
+                            clipRule="evenodd"
                           />
                         </svg>
                       }
@@ -226,6 +229,7 @@ const DraggableColumn = forwardRef((props, ref) => {
             ) : (
               <Button
                 w={"full"}
+                mr={"16px"}
                 borderStyle={"dashed"}
                 borderColor={"blackAlpha.500"}
                 // mt={3}

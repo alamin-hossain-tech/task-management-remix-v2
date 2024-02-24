@@ -7,6 +7,7 @@ import type { EntryContext } from "@remix-run/node"; // Depends on the runtime y
 
 import { ServerStyleContext } from "./context";
 import createEmotionCache from "./createEmotionCache";
+import mongoose from "mongoose";
 
 export default function handleRequest(
   request: Request,

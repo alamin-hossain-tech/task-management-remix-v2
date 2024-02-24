@@ -5,36 +5,24 @@ import {
   HStack,
   IconButton,
   Input,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuList,
   Skeleton,
-  Text,
-  VStack,
-  useDisclosure,
 } from "@chakra-ui/react";
-import type { MetaFunction } from "@remix-run/node";
+import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
+import { json, useLoaderData, useSubmit } from "@remix-run/react";
+import { FormEvent, useEffect, useRef, useState } from "react";
+import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  DragDropContext,
-  Draggable,
-  DropResult,
-  Droppable,
-} from "react-beautiful-dnd";
+import DraggableColumn from "~/components/DraggableColumn/DraggableColumn";
+import DB from "~/db/db.server";
+
+import TaskModel from "~/db/model/task.model";
+
 import {
   addColumn,
-  addItem,
   addState,
-  removeColumn,
-  removeItem,
   updateColumn,
 } from "~/redux/features/drag-drop/drag-drop.slice";
 import { storeState } from "~/redux/store";
-import { FormEvent, useEffect, useRef, useState } from "react";
-import CommentIcon from "~/components/icons/comment-icon";
-import LinkIcon from "~/components/icons/link-icon";
-import DraggableColumn from "~/components/DraggableColumn/DraggableColumn";
 
 export const meta: MetaFunction = () => {
   return [
@@ -128,103 +116,138 @@ export default function Index() {
   };
 
   const addBoardRef = useRef();
+  const submit = useSubmit();
+  const handleSave = () => {
+    submit({ data: JSON.stringify(dragItems) }, { method: "POST" });
+  };
 
+  const data = useLoaderData();
+
+  useEffect(() => {
+    if (data && data?.collections) {
+      dispatch(
+        addState({
+          value: data.collections,
+        })
+      );
+    }
+  }, [data]);
+  console.log(dragItems);
   return (
-    <Flex
+    <>
+      <Flex
 
-    // bgColor={"yellow.50"}
-    >
-      <Box>
-        <DragDropContext onDragEnd={onDragEnd}>
-          <Droppable droppableId="main" direction="horizontal" type="column">
-            {(provided, snapshot) => (
-              <Box
-                ref={provided.innerRef}
-                paddingRight={
-                  snapshot.isUsingPlaceholder &&
-                  Object.values(dragItems).length > 1
-                    ? "325px"
-                    : "0px"
-                }
-              >
-                <Flex alignItems={"start"}>
-                  {true
-                    ? dragItems?.map((item, index) => {
-                        return (
-                          <DraggableColumn
-                            item={item}
-                            index={index}
-                          ></DraggableColumn>
-                        );
-                      })
-                    : [...Array(3).keys()].map((_, index) => (
-                        <Skeleton
-                          key={index}
-                          rounded={"8px"}
-                          h={"400px"}
-                          w={"250px"}
-                          mr={"25px"}
-                        />
-                      ))}
-                </Flex>
-                {provided.placeholder}
-              </Box>
-            )}
-          </Droppable>
-        </DragDropContext>
-      </Box>
-      <Box w={"300px"} flexShrink={0}>
-        {addColumnOpen ? (
-          <Box
-            w={"full"}
-            p={"12px"}
-            bg={"blackAlpha.100"}
-            _dark={{ bg: "gray.600" }}
-            rounded={"8px"}
-          >
-            <form onSubmit={handleAddBoard}>
-              <Input name="title" ref={addBoardRef} />
-              <HStack pt={"8px"}>
-                <Button variant={"secondary"} w={"120px"} type="submit">
-                  Add
-                </Button>{" "}
-                <IconButton
-                  aria-label=""
-                  colorScheme="red"
-                  onClick={() => setAddColumnOpen(false)}
-                  icon={
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="16"
-                      height="16"
-                      viewBox="0 0 16 16"
-                    >
-                      <path
-                        fill="currentColor"
-                        fill-rule="evenodd"
-                        d="M4.28 3.22a.75.75 0 0 0-1.06 1.06L6.94 8l-3.72 3.72a.75.75 0 1 0 1.06 1.06L8 9.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L9.06 8l3.72-3.72a.75.75 0 0 0-1.06-1.06L8 6.94z"
-                        clip-rule="evenodd"
-                      />
-                    </svg>
+      // bgColor={"yellow.50"}
+      >
+        <Box>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="main" direction="horizontal" type="column">
+              {(provided, snapshot) => (
+                <Box
+                  ref={provided.innerRef}
+                  paddingRight={
+                    snapshot.isUsingPlaceholder &&
+                    Object.values(dragItems).length > 1
+                      ? "325px"
+                      : "0px"
                   }
-                />
-              </HStack>
-            </form>
-          </Box>
-        ) : (
-          <Button
-            w={"200px"}
-            colorScheme="blue"
-            onClick={() => {
-              setAddColumnOpen(true);
-              setTimeout(() => addBoardRef.current.focus(), 10);
-            }}
-            variant={"primary"}
-          >
-            Add New List
-          </Button>
-        )}
-      </Box>
-    </Flex>
+                >
+                  <Flex alignItems={"start"}>
+                    {true
+                      ? dragItems?.map((item, index) => {
+                          return (
+                            <DraggableColumn
+                              item={item}
+                              index={index}
+                              key={item.id}
+                            ></DraggableColumn>
+                          );
+                        })
+                      : [...Array(3).keys()].map((_, index) => (
+                          <Skeleton
+                            key={index}
+                            rounded={"8px"}
+                            h={"400px"}
+                            w={"250px"}
+                            mr={"25px"}
+                          />
+                        ))}
+                  </Flex>
+                  {provided.placeholder}
+                </Box>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </Box>
+        <Box w={"300px"} flexShrink={0}>
+          {addColumnOpen ? (
+            <Box
+              w={"full"}
+              p={"12px"}
+              bg={"blackAlpha.100"}
+              _dark={{ bg: "gray.600" }}
+              rounded={"8px"}
+            >
+              <form onSubmit={handleAddBoard}>
+                <Input name="title" ref={addBoardRef} />
+                <HStack pt={"8px"}>
+                  <Button variant={"secondary"} w={"120px"} type="submit">
+                    Add
+                  </Button>{" "}
+                  <IconButton
+                    aria-label=""
+                    colorScheme="red"
+                    onClick={() => setAddColumnOpen(false)}
+                    icon={
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                      >
+                        <path
+                          fill="currentColor"
+                          fillRule="evenodd"
+                          d="M4.28 3.22a.75.75 0 0 0-1.06 1.06L6.94 8l-3.72 3.72a.75.75 0 1 0 1.06 1.06L8 9.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L9.06 8l3.72-3.72a.75.75 0 0 0-1.06-1.06L8 6.94z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                    }
+                  />
+                </HStack>
+              </form>
+            </Box>
+          ) : (
+            <Button
+              w={"200px"}
+              colorScheme="blue"
+              onClick={() => {
+                setAddColumnOpen(true);
+                setTimeout(() => addBoardRef.current.focus(), 10);
+              }}
+              variant={"primary"}
+            >
+              Add New List
+            </Button>
+          )}
+        </Box>
+      </Flex>
+
+      <Button onClick={handleSave}>Save</Button>
+    </>
   );
 }
+
+export const action = async ({ request }: ActionFunctionArgs) => {
+  const body = await request.formData();
+
+  const data = body.get("data");
+
+  return null;
+};
+
+export const loader = async () => {
+  await DB;
+  const data = await TaskModel.findOne({ userId: "12345" });
+  return json(data);
+};
