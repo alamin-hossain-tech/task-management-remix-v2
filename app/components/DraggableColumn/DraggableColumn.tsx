@@ -142,9 +142,7 @@ const DraggableColumn = forwardRef((props, ref) => {
     <Draggable key={item.id} draggableId={item.id} index={index}>
       {(provided, snap) => (
         <Box
-          pl={"16px"}
-          pr={"4px"}
-          py={"12px"}
+          p={"12px"}
           rounded={"8px"}
           key={item}
           bgColor={"blackAlpha.100"}
