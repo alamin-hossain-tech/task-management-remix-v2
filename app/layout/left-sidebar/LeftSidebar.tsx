@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   HStack,
+  Image,
   Input,
   Modal,
   ModalBody,
@@ -91,10 +92,17 @@ const LeftSidebar = () => {
             bg={"gray.600"}
             color={"white"}
             px={"12px"}
-            py={"6px"}
+            py={"16px"}
             rounded={"4px"}
+            boxShadow={"md"}
           >
-            <Text>Mo App</Text>
+            <Image
+              mt={"-30px"}
+              w={"40px"}
+              mx={"auto"}
+              src="/logo-2.svg"
+            ></Image>
+            <Text textAlign={"center"}>Task Management</Text>
           </Box>
         </VStack>
       </VStack>

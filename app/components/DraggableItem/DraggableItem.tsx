@@ -20,7 +20,7 @@ const DraggableItem = forwardRef((props, ref) => {
     <Draggable key={task.id} draggableId={task.id} index={itemIndex}>
       {(provided, snapshot) => (
         <Box
-          bg={snapshot.isDragging ? "gray.100" : "white"}
+          bg={snapshot.isDragging ? "gray.600" : "white"}
           _dark={{ bg: "gray.700" }}
           mb={"12px"}
           rounded={"8px"}
@@ -29,9 +29,9 @@ const DraggableItem = forwardRef((props, ref) => {
           px={"16px"}
           ref={provided.innerRef}
           {...provided.draggableProps}
-          style={provided.draggableProps.style}
+          color={snapshot.isDragging ? "white" : "inherit"}
+          // style={provided.draggableProps.style}
           {...provided.dragHandleProps}
-          bgColor={snapshot.isDragging ? "blue.100" : ""}
         >
           <HStack justifyContent={"space-between"}>
             <Text fontWeight={500} fontSize={"sm"}>
@@ -58,9 +58,6 @@ const DraggableItem = forwardRef((props, ref) => {
                   </svg>
                 </MenuButton>
                 <MenuList>
-                  <MenuItem>Download</MenuItem>
-                  <MenuItem>Create a Copy</MenuItem>
-                  <MenuItem>Mark as Draft</MenuItem>
                   <MenuItem
                     onClick={() =>
                       dispatch(
@@ -73,7 +70,6 @@ const DraggableItem = forwardRef((props, ref) => {
                   >
                     Delete
                   </MenuItem>
-                  <MenuItem>Attend a Workshop</MenuItem>
                 </MenuList>
               </Menu>
             </HStack>
