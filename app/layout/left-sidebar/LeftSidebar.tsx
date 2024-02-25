@@ -121,7 +121,7 @@ const LeftSidebar = () => {
 
           <ModalFooter gap={"8px"} justifyContent={"start"}>
             <Button onClick={newSave} variant="secondary">
-              Secondary Action
+              Save
             </Button>
             <Button variant={"red"} onClick={onClose}>
               Cancel

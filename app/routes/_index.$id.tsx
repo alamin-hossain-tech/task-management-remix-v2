@@ -6,7 +6,9 @@ import {
   IconButton,
   Input,
   Skeleton,
+  SkeletonText,
   Text,
+  useColorMode,
 } from "@chakra-ui/react";
 import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
 import { useNavigation, useParams, useSubmit } from "@remix-run/react";
@@ -35,6 +37,7 @@ export const meta: MetaFunction = () => {
 export default function Index() {
   const dragItems = useSelector((state: storeState) => state.dragItems);
   const dispatch = useDispatch();
+  const { colorMode } = useColorMode();
 
   const onDragEnd = (result: DropResult) => {
     const { source, destination, draggableId, type } = result;
@@ -98,8 +101,6 @@ export default function Index() {
       }
     }
   };
-
-  const navigation = useNavigation();
 
   const [addColumnOpen, setAddColumnOpen] = useState(false);
 
@@ -176,84 +177,111 @@ export default function Index() {
                       : "0px"
                   }
                 >
-                  <Flex alignItems={"start"}>
-                    {!loading
-                      ? dragItems?.map((item, index) => {
-                          return (
-                            <DraggableColumn
-                              item={item}
-                              index={index}
-                              key={item.id}
-                            ></DraggableColumn>
-                          );
-                        })
-                      : [...Array(3).keys()].map((_, index) => (
+                  {!loading ? (
+                    <Flex alignItems={"start"}>
+                      {dragItems?.map((item, index) => {
+                        return (
+                          <DraggableColumn
+                            item={item}
+                            index={index}
+                            key={item.id}
+                          ></DraggableColumn>
+                        );
+                      })}
+                      <Box w={"300px"} flexShrink={0}>
+                        {addColumnOpen ? (
+                          <Box
+                            w={"full"}
+                            p={"12px"}
+                            bg={"blackAlpha.100"}
+                            _dark={{ bg: "gray.600" }}
+                            rounded={"8px"}
+                          >
+                            <form onSubmit={handleAddBoard}>
+                              <Input name="title" ref={addBoardRef} />
+                              <HStack pt={"8px"}>
+                                <Button
+                                  variant={"secondary"}
+                                  w={"120px"}
+                                  type="submit"
+                                >
+                                  Add
+                                </Button>{" "}
+                                <IconButton
+                                  aria-label=""
+                                  variant={"red"}
+                                  onClick={() => setAddColumnOpen(false)}
+                                  icon={
+                                    <svg
+                                      xmlns="http://www.w3.org/2000/svg"
+                                      width="16"
+                                      height="16"
+                                      viewBox="0 0 16 16"
+                                    >
+                                      <path
+                                        fill="currentColor"
+                                        fillRule="evenodd"
+                                        d="M4.28 3.22a.75.75 0 0 0-1.06 1.06L6.94 8l-3.72 3.72a.75.75 0 1 0 1.06 1.06L8 9.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L9.06 8l3.72-3.72a.75.75 0 0 0-1.06-1.06L8 6.94z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
+                                  }
+                                />
+                              </HStack>
+                            </form>
+                          </Box>
+                        ) : (
+                          <Button
+                            w={"200px"}
+                            onClick={() => {
+                              setAddColumnOpen(true);
+                              setTimeout(() => addBoardRef.current.focus(), 10);
+                            }}
+                            variant={"primary"}
+                          >
+                            Add New List
+                          </Button>
+                        )}
+                      </Box>
+                    </Flex>
+                  ) : (
+                    <Flex gap={"50px"}>
+                      {[...Array(3).keys()].map((_, index) => (
+                        <Box>
                           <Skeleton
                             key={index}
-                            rounded={"8px"}
-                            h={"400px"}
-                            w={"250px"}
-                            mr={"25px"}
+                            h={"30px"}
+                            w={"full"}
+                            startColor={
+                              colorMode === "light"
+                                ? "blackAlpha.300"
+                                : "gray.600"
+                            }
+                            endColor="blackAlpha.200"
+                            mr={"280px"}
                           />
-                        ))}
-                  </Flex>
+                          <SkeletonText
+                            startColor={
+                              colorMode === "light"
+                                ? "blackAlpha.300"
+                                : "gray.600"
+                            }
+                            endColor="blackAlpha.200"
+                            mt="4"
+                            noOfLines={8}
+                            // spacing="4"
+                            skeletonHeight="8"
+                          />
+                        </Box>
+                      ))}
+                    </Flex>
+                  )}
+
                   {provided.placeholder}
                 </Box>
               )}
             </Droppable>
           </DragDropContext>
-        </Box>
-
-        <Box w={"300px"} flexShrink={0}>
-          {addColumnOpen ? (
-            <Box
-              w={"full"}
-              p={"12px"}
-              bg={"blackAlpha.100"}
-              _dark={{ bg: "gray.600" }}
-              rounded={"8px"}
-            >
-              <form onSubmit={handleAddBoard}>
-                <Input name="title" ref={addBoardRef} />
-                <HStack pt={"8px"}>
-                  <Button variant={"secondary"} w={"120px"} type="submit">
-                    Add
-                  </Button>{" "}
-                  <IconButton
-                    aria-label=""
-                    variant={"red"}
-                    onClick={() => setAddColumnOpen(false)}
-                    icon={
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        width="16"
-                        height="16"
-                        viewBox="0 0 16 16"
-                      >
-                        <path
-                          fill="currentColor"
-                          fillRule="evenodd"
-                          d="M4.28 3.22a.75.75 0 0 0-1.06 1.06L6.94 8l-3.72 3.72a.75.75 0 1 0 1.06 1.06L8 9.06l3.72 3.72a.75.75 0 1 0 1.06-1.06L9.06 8l3.72-3.72a.75.75 0 0 0-1.06-1.06L8 6.94z"
-                          clipRule="evenodd"
-                        />
-                      </svg>
-                    }
-                  />
-                </HStack>
-              </form>
-            </Box>
-          ) : (
-            <Button
-              w={"200px"}
-              onClick={() => {
-                setAddColumnOpen(true);
-                setTimeout(() => addBoardRef.current.focus(), 10);
-              }}
-              variant={"primary"}
-            >
-              Add New List
-            </Button>
-          )}
         </Box>
       </Flex>
     </>
