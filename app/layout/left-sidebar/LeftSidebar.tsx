@@ -12,6 +12,7 @@ import {
   ModalOverlay,
   Text,
   VStack,
+  useColorMode,
   useDisclosure,
 } from "@chakra-ui/react";
 import {
@@ -38,6 +39,7 @@ const LeftSidebar = () => {
   };
   const params = useParams();
   const { data } = useLoaderData<typeof loader>();
+  const { colorMode } = useColorMode();
 
   return (
     <>
@@ -46,6 +48,7 @@ const LeftSidebar = () => {
         h={"calc(100vh - 70px)"}
         p={"16px"}
         align={"start"}
+        fontWeight={500}
       >
         <VStack gap={5} w={"full"}>
           <HStack justifyContent={"space-between"} w={"full"}>
@@ -59,7 +62,20 @@ const LeftSidebar = () => {
               key={id}
               w={"full"}
               rounded={"6px"}
-              bg={params.id === id ? "blue.100" : "gray.100"}
+              bg={
+                params.id === id
+                  ? "gray.600"
+                  : colorMode === "dark"
+                  ? "gray.900"
+                  : "blackAlpha.200"
+              }
+              color={
+                params.id === id
+                  ? "white"
+                  : colorMode === "light"
+                  ? "black"
+                  : "white"
+              }
             >
               <NavLink to={id}>
                 <Box w={"full"} py={"4px"} px={"16px"}>
@@ -85,18 +101,22 @@ const LeftSidebar = () => {
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>Modal Title</ModalHeader>
+          <ModalHeader>Add New Project</ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <Input onChange={(e) => setName(e.target.value)} value={name} />
+            <Input
+              onChange={(e) => setName(e.target.value)}
+              value={name}
+              placeholder="Name"
+            />
           </ModalBody>
 
-          <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
-            </Button>
-            <Button onClick={newSave} variant="ghost">
+          <ModalFooter gap={"8px"} justifyContent={"start"}>
+            <Button onClick={newSave} variant="secondary">
               Secondary Action
+            </Button>
+            <Button variant={"red"} onClick={onClose}>
+              Cancel
             </Button>
           </ModalFooter>
         </ModalContent>

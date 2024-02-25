@@ -15,10 +15,8 @@ const config: ThemeConfig = {
   useSystemColorMode: false,
 };
 
-const getBorderColor = (props: any) => mode("gray.200", "gray.600")(props);
-
 const colors = {
-  brand: { 100: "#000", 200: "#f2f2f2" },
+  brand: { 100: "#000", 200: "#f2f2f2", 400: "#0096FF" },
   border: "#f2f2f2",
 };
 
@@ -48,10 +46,18 @@ const theme = extendTheme({
           },
         }),
         secondary: (props: StyleFunctionProps) => ({
-          bg: "red.200",
+          bg: "gray.700",
+          color: "white",
           _hover: {
             bg: "brand.100",
             color: "white",
+          },
+        }),
+        red: (props: StyleFunctionProps) => ({
+          bg: "red.600",
+          color: "white",
+          _hover: {
+            bg: "red.400",
           },
         }),
       },

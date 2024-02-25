@@ -23,7 +23,7 @@ import {
 import DraggableItem from "../DraggableItem/DraggableItem";
 
 const HeadingComponent = ({ provided, item, dispatch, index }) => {
-  const [edit, setEdit] = useState();
+  const [edit, setEdit] = useState("");
   const inputRef = useRef(null);
   useEffect(() => {
     if (item.id === edit && inputRef.current) {
@@ -54,7 +54,15 @@ const HeadingComponent = ({ provided, item, dispatch, index }) => {
             )
           }
           onBlur={() => setEdit("")}
-          onKeyDown={(e) => e.key === "Enter" && setEdit("")}
+          onKeyDown={(e) => {
+            console.log(e.key);
+            if (e.key === "Enter") {
+              setEdit("");
+            } else if (e.key === "Esc") {
+              console.log(true);
+              setEdit("");
+            }
+          }}
           fontSize={"lg"}
           fontWeight={500}
         />
@@ -169,8 +177,14 @@ const DraggableColumn = forwardRef((props, ref) => {
                 maxH={"calc(100vh - 280px)"}
                 overflowY={snap.isUsingPlaceholder ? "scroll" : "auto"}
                 style={{ scrollbarGutter: "stable", scrollbarWidth: "thin" }}
+                mt={"8px"}
               >
-                <VStack ref={provided.innerRef} rounded={"8px"} gap={0}>
+                <VStack
+                  minH={"1px"}
+                  ref={provided.innerRef}
+                  rounded={"8px"}
+                  gap={0}
+                >
                   {item?.items?.map((task, itemIndex) => (
                     <DraggableItem
                       task={task}
@@ -194,11 +208,12 @@ const DraggableColumn = forwardRef((props, ref) => {
                 <form onSubmit={(e) => handleAddItem(e, item.id)}>
                   <Input name="title" ref={addItemRef} />
                   <HStack pt={"8px"}>
-                    <Button colorScheme="blue" type="submit">
+                    <Button variant={"secondary"} type="submit">
                       Add
                     </Button>{" "}
                     <IconButton
-                      colorScheme="red"
+                      aria-label=""
+                      variant={"red"}
                       onClick={() =>
                         setAddItemOpen({
                           active: false,

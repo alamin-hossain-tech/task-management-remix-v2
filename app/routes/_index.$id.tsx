@@ -133,17 +133,21 @@ export default function Index() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    dispatch(addState({ value: [] }));
     setLoading(true);
     const dbRef = ref(db);
     const collections = get(child(dbRef, `collections/${id}`));
     collections.then((value) => {
-      dispatch(addState({ value: value.val().data }));
+      const data = value.val().data;
+      if (data) {
+        dispatch(addState({ value: value.val().data }));
+      }
       setLoading(false);
     });
   }, [id]);
 
   useEffect(() => {
-    if (!loading) {
+    if (!loading && dragItems.length > 0) {
       submit(
         { data: JSON.stringify(dragItems) },
         {
@@ -222,7 +226,7 @@ export default function Index() {
                   </Button>{" "}
                   <IconButton
                     aria-label=""
-                    colorScheme="red"
+                    variant={"red"}
                     onClick={() => setAddColumnOpen(false)}
                     icon={
                       <svg
@@ -246,7 +250,6 @@ export default function Index() {
           ) : (
             <Button
               w={"200px"}
-              colorScheme="blue"
               onClick={() => {
                 setAddColumnOpen(true);
                 setTimeout(() => addBoardRef.current.focus(), 10);
@@ -258,10 +261,6 @@ export default function Index() {
           )}
         </Box>
       </Flex>
-
-      <Box mt={"16px"}>
-        <Button onClick={handleSave}>Save</Button>
-      </Box>
     </>
   );
 }

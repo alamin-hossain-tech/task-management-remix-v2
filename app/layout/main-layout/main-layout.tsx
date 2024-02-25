@@ -1,9 +1,10 @@
-import { Box, Flex, HStack, Heading } from "@chakra-ui/react";
-import { Outlet } from "@remix-run/react";
+import { Box, Flex, HStack, Heading, Image } from "@chakra-ui/react";
+import { Outlet, useNavigate } from "@remix-run/react";
 import Header from "../header/Header";
 import LeftSidebar from "../left-sidebar/LeftSidebar";
 
 const MainLayout = () => {
+  const navigate = useNavigate();
   return (
     <Box position={"relative"}>
       {/* logo box  */}
@@ -18,8 +19,14 @@ const MainLayout = () => {
           align={"center"}
           justify={"center"}
           flexShrink={0}
+          cursor={"pointer"}
+          onClick={() => navigate("/")}
         >
-          <Heading>Logo</Heading>
+          {/* <Heading>Logo</Heading> */}
+          <Image w={"20%"} src="/logo-2.svg" />
+          <Heading as={"h4"} size={"sm"}>
+            Task Management
+          </Heading>
         </HStack>
         <Header />
       </HStack>
