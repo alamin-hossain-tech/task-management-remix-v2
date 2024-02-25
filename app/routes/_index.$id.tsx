@@ -6,15 +6,15 @@ import {
   IconButton,
   Input,
   Skeleton,
+  Text,
 } from "@chakra-ui/react";
 import type { ActionFunctionArgs, MetaFunction } from "@remix-run/node";
-import { useLoaderData, useSubmit } from "@remix-run/react";
-import { child, get, ref, set } from "firebase/database";
-import { FormEvent, useEffect, useRef, useState } from "react";
+import { useNavigation, useParams, useSubmit } from "@remix-run/react";
+import { child, get, ref, update } from "firebase/database";
+import { FormEvent, Suspense, useEffect, useRef, useState } from "react";
 import { DragDropContext, DropResult, Droppable } from "react-beautiful-dnd";
 import { useDispatch, useSelector } from "react-redux";
 import DraggableColumn from "~/components/DraggableColumn/DraggableColumn";
-import { prisma } from "~/db.server";
 
 import { db } from "~/firebase.config";
 
@@ -99,6 +99,8 @@ export default function Index() {
     }
   };
 
+  const navigation = useNavigation();
+
   const [addColumnOpen, setAddColumnOpen] = useState(false);
 
   const handleAddBoard = (e: FormEvent<HTMLFormElement>) => {
@@ -119,14 +121,37 @@ export default function Index() {
   const addBoardRef = useRef();
   const submit = useSubmit();
   const handleSave = () => {
-    submit({ data: JSON.stringify(dragItems) }, { method: "POST" });
+    submit(
+      { data: JSON.stringify(dragItems) },
+      {
+        method: "POST",
+      }
+    );
   };
 
-  const data = useLoaderData();
+  const { id } = useParams();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    dispatch(addState({ value: data }));
-  }, [data]);
+    setLoading(true);
+    const dbRef = ref(db);
+    const collections = get(child(dbRef, `collections/${id}`));
+    collections.then((value) => {
+      dispatch(addState({ value: value.val().data }));
+      setLoading(false);
+    });
+  }, [id]);
+
+  useEffect(() => {
+    if (!loading) {
+      submit(
+        { data: JSON.stringify(dragItems) },
+        {
+          method: "POST",
+        }
+      );
+    }
+  }, [loading, dragItems]);
 
   return (
     <>
@@ -134,46 +159,52 @@ export default function Index() {
 
       // bgColor={"yellow.50"}
       >
-        <Box>
-          <DragDropContext onDragEnd={onDragEnd}>
-            <Droppable droppableId="main" direction="horizontal" type="column">
-              {(provided, snapshot) => (
-                <Box
-                  ref={provided.innerRef}
-                  paddingRight={
-                    snapshot.isUsingPlaceholder &&
-                    Object.values(dragItems).length > 1
-                      ? "325px"
-                      : "0px"
-                  }
-                >
-                  <Flex alignItems={"start"}>
-                    {true
-                      ? dragItems?.map((item, index) => {
-                          return (
-                            <DraggableColumn
-                              item={item}
-                              index={index}
-                              key={item.id}
-                            ></DraggableColumn>
-                          );
-                        })
-                      : [...Array(3).keys()].map((_, index) => (
-                          <Skeleton
-                            key={index}
-                            rounded={"8px"}
-                            h={"400px"}
-                            w={"250px"}
-                            mr={"25px"}
-                          />
-                        ))}
-                  </Flex>
-                  {provided.placeholder}
-                </Box>
-              )}
-            </Droppable>
-          </DragDropContext>
-        </Box>
+        <Suspense fallback={<Text>Loading...</Text>}>
+          <Box>
+            <DragDropContext onDragEnd={onDragEnd}>
+              <Droppable
+                droppableId="main"
+                direction="horizontal"
+                type="column"
+              >
+                {(provided, snapshot) => (
+                  <Box
+                    ref={provided.innerRef}
+                    paddingRight={
+                      snapshot.isUsingPlaceholder &&
+                      Object.values(dragItems).length > 1
+                        ? "325px"
+                        : "0px"
+                    }
+                  >
+                    <Flex alignItems={"start"}>
+                      {!loading
+                        ? dragItems?.map((item, index) => {
+                            return (
+                              <DraggableColumn
+                                item={item}
+                                index={index}
+                                key={item.id}
+                              ></DraggableColumn>
+                            );
+                          })
+                        : [...Array(3).keys()].map((_, index) => (
+                            <Skeleton
+                              key={index}
+                              rounded={"8px"}
+                              h={"400px"}
+                              w={"250px"}
+                              mr={"25px"}
+                            />
+                          ))}
+                    </Flex>
+                    {provided.placeholder}
+                  </Box>
+                )}
+              </Droppable>
+            </DragDropContext>
+          </Box>
+        </Suspense>
         <Box w={"300px"} flexShrink={0}>
           {addColumnOpen ? (
             <Box
@@ -228,30 +259,21 @@ export default function Index() {
         </Box>
       </Flex>
 
-      <Button onClick={handleSave}>Save</Button>
+      <Box mt={"16px"}>
+        <Button onClick={handleSave}>Save</Button>
+      </Box>
     </>
   );
 }
 
-export const loader = async () => {
-  const dbRef = ref(db);
-  const collections = (await get(child(dbRef, "collections"))).val();
-
-  if (collections !== '"null"' && collections !== null) {
-    return collections;
-  }
-  return [];
-};
-
-export const action = async ({ request }: ActionFunctionArgs) => {
+export const action = async ({ request, params }: ActionFunctionArgs) => {
   try {
     const body = await request.formData();
     const data = body.get("data");
-    const collectionsRef = ref(db, "collections");
-    set(collectionsRef, JSON.parse(data));
+    const collectionsRef = ref(db, `collections/${params.id}`);
+    update(collectionsRef, { data: JSON.parse(data) });
     return null;
   } catch (error) {
-    console.log({ error });
     return error;
   }
 };

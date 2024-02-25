@@ -3,13 +3,13 @@ import { initializeApp } from "firebase/app";
 import { getDatabase } from "firebase/database";
 
 const firebaseConfig = {
-  apiKey: process.env.apiKey,
-  authDomain: process.env.authDomain,
-  projectId: process.env.projectId,
-  storageBucket: process.env.storageBucket,
-  messagingSenderId: process.env.messagingSenderId,
-  appId: process.env.appId,
-  databaseURL: process.env.databaseURL,
+  apiKey: "AIzaSyAV-omwPCn_ifPovgdbAZ8pCMJjtHkNYz8",
+  authDomain: "task-management-83929.firebaseapp.com",
+  projectId: "task-management-83929",
+  storageBucket: "task-management-83929.appspot.com",
+  messagingSenderId: "777549019512",
+  appId: "1:777549019512:web:7a2adf018ef00c40e5708d",
+  databaseURL: "https://task-management-83929-default-rtdb.firebaseio.com/",
 };
 
 // Initialize Firebase

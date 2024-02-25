@@ -4,7 +4,6 @@ import React from "react";
 const About = () => {
   const { colorMode, toggleColorMode } = useColorMode();
 
-  console.log(colorMode);
   return (
     <Box color={"brand.100"}>
       {" "}

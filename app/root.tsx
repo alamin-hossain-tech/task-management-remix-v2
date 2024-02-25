@@ -1,7 +1,12 @@
 // root.tsx
 import { ChakraProvider, cookieStorageManagerSSR } from "@chakra-ui/react";
 import { withEmotionCache } from "@emotion/react";
-import { LinksFunction, LoaderFunction, MetaFunction } from "@remix-run/node"; // Depends on the runtime you choose
+import {
+  ActionFunctionArgs,
+  LinksFunction,
+  LoaderFunction,
+  MetaFunction,
+} from "@remix-run/node"; // Depends on the runtime you choose
 import {
   Links,
   LiveReload,
@@ -17,6 +22,8 @@ import MainLayout from "./layout/main-layout/main-layout";
 import theme from "./theme/theme";
 import { Provider } from "react-redux";
 import store from "./redux/store";
+import { child, get, push, ref } from "firebase/database";
+import { db } from "./firebase.config";
 
 export const meta: MetaFunction = () => [
   {
@@ -74,7 +81,7 @@ const Document = withEmotionCache(
 
     const CHAKRA_COOKIE_COLOR_KEY = "chakra-ui-color-mode";
 
-    let cookies: string = useLoaderData();
+    let { cookies } = useLoaderData();
 
     // the client get the cookies from the document
     // because when we do a client routing, the loader can have stored an outdated value
@@ -154,5 +161,17 @@ export default function App() {
 export const loader: LoaderFunction = async ({ request }) => {
   // first time users will not have any cookies and you may not return
   // undefined here, hence ?? is necessary
-  return request.headers.get("cookie") ?? "";
+  const collectionsRef = ref(db);
+  const data = (await get(child(collectionsRef, "collections"))).val();
+  return { cookies: request.headers.get("cookie") ?? "", data };
+};
+
+export const action = async ({ request }: ActionFunctionArgs) => {
+  try {
+    const body = await request.formData();
+    const name = body.get("name");
+    const collectionsRef = ref(db, "collections");
+    push(collectionsRef, { name });
+    return null;
+  } catch (error) {}
 };

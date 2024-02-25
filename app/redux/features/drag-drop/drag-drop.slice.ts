@@ -56,7 +56,7 @@ const DragDropSlice = createSlice({
         const columnIndex = draftState.findIndex(
           (column) => column.id === columnId
         );
-        console.log({ columnIndex });
+
         if (columnIndex !== -1) {
           draftState[columnIndex][property] = value;
         }

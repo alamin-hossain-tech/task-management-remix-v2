@@ -7,7 +7,7 @@ const MainLayout = () => {
   return (
     <Box position={"relative"}>
       {/* logo box  */}
-      <HStack w={"full"} position={"sticky"} top={0} left={0}>
+      <HStack w={"full"} position={"sticky"} top={0} left={0} gap={0}>
         <HStack
           w={"250px"}
           h={"70px"}
