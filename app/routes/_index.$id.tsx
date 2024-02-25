@@ -163,52 +163,47 @@ export default function Index() {
 
       // bgColor={"yellow.50"}
       >
-        <Suspense fallback={<Text>Loading...</Text>}>
-          <Box>
-            <DragDropContext onDragEnd={onDragEnd}>
-              <Droppable
-                droppableId="main"
-                direction="horizontal"
-                type="column"
-              >
-                {(provided, snapshot) => (
-                  <Box
-                    ref={provided.innerRef}
-                    paddingRight={
-                      snapshot.isUsingPlaceholder &&
-                      Object.values(dragItems).length > 1
-                        ? "325px"
-                        : "0px"
-                    }
-                  >
-                    <Flex alignItems={"start"}>
-                      {!loading
-                        ? dragItems?.map((item, index) => {
-                            return (
-                              <DraggableColumn
-                                item={item}
-                                index={index}
-                                key={item.id}
-                              ></DraggableColumn>
-                            );
-                          })
-                        : [...Array(3).keys()].map((_, index) => (
-                            <Skeleton
-                              key={index}
-                              rounded={"8px"}
-                              h={"400px"}
-                              w={"250px"}
-                              mr={"25px"}
-                            />
-                          ))}
-                    </Flex>
-                    {provided.placeholder}
-                  </Box>
-                )}
-              </Droppable>
-            </DragDropContext>
-          </Box>
-        </Suspense>
+        <Box>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <Droppable droppableId="main" direction="horizontal" type="column">
+              {(provided, snapshot) => (
+                <Box
+                  ref={provided.innerRef}
+                  paddingRight={
+                    snapshot.isUsingPlaceholder &&
+                    Object.values(dragItems).length > 1
+                      ? "325px"
+                      : "0px"
+                  }
+                >
+                  <Flex alignItems={"start"}>
+                    {!loading
+                      ? dragItems?.map((item, index) => {
+                          return (
+                            <DraggableColumn
+                              item={item}
+                              index={index}
+                              key={item.id}
+                            ></DraggableColumn>
+                          );
+                        })
+                      : [...Array(3).keys()].map((_, index) => (
+                          <Skeleton
+                            key={index}
+                            rounded={"8px"}
+                            h={"400px"}
+                            w={"250px"}
+                            mr={"25px"}
+                          />
+                        ))}
+                  </Flex>
+                  {provided.placeholder}
+                </Box>
+              )}
+            </Droppable>
+          </DragDropContext>
+        </Box>
+
         <Box w={"300px"} flexShrink={0}>
           {addColumnOpen ? (
             <Box

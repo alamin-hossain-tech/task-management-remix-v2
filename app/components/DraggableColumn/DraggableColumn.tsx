@@ -10,6 +10,7 @@ import {
   MenuList,
   Text,
   VStack,
+  useColorMode,
 } from "@chakra-ui/react";
 import { FormEvent, forwardRef, useEffect, useRef, useState } from "react";
 import { Draggable, Droppable } from "react-beautiful-dnd";
@@ -22,7 +23,7 @@ import {
 } from "~/redux/features/drag-drop/drag-drop.slice";
 import DraggableItem from "../DraggableItem/DraggableItem";
 
-const HeadingComponent = ({ provided, item, dispatch, index }) => {
+const HeadingComponent = ({ provided, item, dispatch, index, snap }) => {
   const [edit, setEdit] = useState("");
   const inputRef = useRef(null);
   useEffect(() => {
@@ -37,6 +38,7 @@ const HeadingComponent = ({ provided, item, dispatch, index }) => {
       justifyContent={"space-between"}
       {...provided.dragHandleProps}
       gap={"10px"}
+      color={snap.isDragging ? "white" : "inherit"}
     >
       {item.id === edit ? (
         <Input
@@ -58,8 +60,7 @@ const HeadingComponent = ({ provided, item, dispatch, index }) => {
             console.log(e.key);
             if (e.key === "Enter") {
               setEdit("");
-            } else if (e.key === "Esc") {
-              console.log(true);
+            } else if (e.key === "Escape") {
               setEdit("");
             }
           }}
@@ -77,6 +78,7 @@ const HeadingComponent = ({ provided, item, dispatch, index }) => {
           }}
           w={"full"}
           border={"1.5px solid transparent"}
+          textTransform={"capitalize"}
         >
           {item.title}
         </Text>
@@ -124,7 +126,7 @@ const DraggableColumn = forwardRef((props, ref) => {
   const dispatch = useDispatch();
   const addItemRef = useRef();
   const [addItemOpen, setAddItemOpen] = useState({ active: false, id: "" });
-  const [details, setDetails] = useState();
+  const { colorMode } = useColorMode();
 
   const handleAddItem = (e: FormEvent<HTMLFormElement>, id: string) => {
     e.preventDefault();
@@ -153,7 +155,7 @@ const DraggableColumn = forwardRef((props, ref) => {
           p={"12px"}
           rounded={"8px"}
           key={item}
-          bgColor={"blackAlpha.100"}
+          bgColor={snap.isDragging ? "gray.600" : "blackAlpha.200"}
           _dark={{ bgColor: "gray.600" }}
           w={"300px"}
           mr={"25px"}
@@ -167,6 +169,7 @@ const DraggableColumn = forwardRef((props, ref) => {
             provided={provided}
             dispatch={dispatch}
             index={index}
+            snap={snap}
           />
           {/* droppable  */}
 
@@ -244,7 +247,12 @@ const DraggableColumn = forwardRef((props, ref) => {
                 w={"full"}
                 mr={"16px"}
                 borderStyle={"dashed"}
-                borderColor={"blackAlpha.500"}
+                borderColor={
+                  snap.isDragging || colorMode === "dark"
+                    ? "white"
+                    : "blackAlpha.500"
+                }
+                color={snap.isDragging ? "white" : "inherit"}
                 // mt={3}
                 variant={"outline"}
                 onClick={() => {
