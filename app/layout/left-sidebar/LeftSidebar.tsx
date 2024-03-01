@@ -18,16 +18,14 @@ import {
 } from "@chakra-ui/react";
 import {
   NavLink,
-  json,
   useLoaderData,
+  useLocation,
   useNavigate,
   useParams,
   useSubmit,
 } from "@remix-run/react";
-import { child, get, push, ref } from "firebase/database";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import AddIcon from "~/components/icons/add-icon";
-import { db } from "~/firebase.config";
 import { loader } from "~/root";
 
 const LeftSidebar = () => {
@@ -41,6 +39,14 @@ const LeftSidebar = () => {
   const params = useParams();
   const { data } = useLoaderData<typeof loader>();
   const { colorMode } = useColorMode();
+  const [init, setInit] = useState(false);
+  const path = useLocation();
+  useEffect(() => {
+    if ((data && !init) || path.pathname === "/") {
+      navigate(Object.keys(data)[0]);
+      setInit(true);
+    }
+  }, [data, path.pathname]);
 
   return (
     <>
