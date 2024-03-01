@@ -4,7 +4,6 @@ import {
   HStack,
   Input,
   InputGroup,
-  InputLeftAddon,
   InputLeftElement,
   Text,
   useColorMode,

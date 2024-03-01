@@ -22,7 +22,6 @@ const MainLayout = () => {
           cursor={"pointer"}
           onClick={() => navigate("/")}
         >
-          {/* <Heading>Logo</Heading> */}
           <Image w={"20%"} src="/logo-2.svg" />
           <Heading as={"h4"} size={"sm"}>
             Task Management
